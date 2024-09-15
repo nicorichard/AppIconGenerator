@@ -1,43 +1,24 @@
 import Foundation
 import AppKit
+import SwiftUI
 import IconGeneratorCore
 import ArgumentParser
 
 struct ParsingError: Error {}
 
 @main
-struct IconGeneratorCommand: ParsableCommand {
-    @Option(name: .shortAndLong, help: "The sf-symbol to generate an icon for")
-    var symbol: String?
-
-    @Option(name: .shortAndLong, help: "The emoji to generate an icon for")
-    var emoji: String?
-
-    @Option(help: "A path to a background image")
-    var backgroundImage: String?
+struct IconGeneratorCommand: AsyncParsableCommand {
+    @Argument(help: "The path to a configuration file")
+    var config: String
 
     @Argument(help: "The path where the image will be saved")
-    var path: String
+    var output: String
 
-    @MainActor
-    mutating func run() throws {
-        let generator: IconGenerator
+    mutating func run() async throws {
+        let execConfig = try ExecutableConfiguration.load(from: config)
 
-        if let emoji = emoji {
-            generator = IconGenerator(emoji: emoji)
-        } else if let symbol = symbol {
-            generator = IconGenerator(systemName: symbol)
-        } else {
-            throw ValidationError("A symbol or emoji must be specified.")
-        }
+        // TODO: Validate
 
-        if let backgroundImage {
-            if !FileManager.default.fileExists(atPath: path) {
-                throw ValidationError("A background image was specified but the file does not exist.")
-            }
-            generator.backgroundImage = NSImage(contentsOf: URL(fileURLWithPath: backgroundImage))
-        }
-
-        try generator.save(path: path)
+        try await IconGenerator(config: execConfig.toCore()).save(path: output)
     }
 }

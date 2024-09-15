@@ -2,23 +2,16 @@ import Foundation
 import SwiftUI
 
 public class IconGenerator {
-    let icon: IconConfiguration
-    
-    public var backgroundImage: NSImage?
+    let config: Configuration
 
-    public init(systemName: String) {
-        icon = IconConfiguration(source: .systemName(systemName), alignment: .trailing)
-    }
-
-    public init(emoji: String) {
-        icon = IconConfiguration(source: .emoji(emoji), alignment: .trailing)
+    public init(config: Configuration) {
+        self.config = config
     }
 
     @MainActor
-    public func save(size: CGFloat = 1024, path: String) throws {
+    public func save(path: String) throws {
         let url = URL(fileURLWithPath: path)
-        let view = AppIcon(icon: icon, size: size, backgroundImage: backgroundImage)
-        let nsImage = ImageRenderer(content: view.frame(width: size, height: size)).nsImage!
+        let nsImage = ImageRenderer(content: AppIcon(icon: config)).nsImage!
 
         try writePNG(image: nsImage, to: url)
     }

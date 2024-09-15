@@ -1,52 +1,59 @@
 import Foundation
 import SwiftUI
 
-struct IconConfiguration {
-    var source: Source
-    var alignment: Alignment
-
-    enum Source {
-        case systemName(String)
-        case emoji(String)
-    }
-}
-
 struct AppIcon: View {
-    var icon: IconConfiguration
-    var size: CGFloat
-    var backgroundImage: NSImage?
+    var icon: Configuration
 
     var body: some View {
         ZStack {
-            Color.white
-
-            if let backgroundImage = backgroundImage {
-                Image(nsImage: backgroundImage)
-                    .resizable()
-                    .scaledToFit()
+            switch icon.background {
+                case .color(let color):
+                    color
+                case .image(let image):
+                    Image(nsImage: image)
+                        .resizable()
+                        .scaledToFill()
             }
 
-            Group {
-                switch icon.source {
-                    case .emoji(let emoji):
-                        buildEmoji(emoji: emoji)
-                    case .systemName(let symbol):
-                        buildSymbol(symbol: symbol)
-                }
+            ForEach(Array(icon.flairs.enumerated()), id: \.offset) { _, flair in
+                buildFlair(flair)
             }
-            .font(.system(size: size / 2 * 0.5))
-            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: icon.alignment)
         }
+        .frame(width: icon.size, height: icon.size)
     }
 
     @ViewBuilder
-    private func buildEmoji(emoji: String) -> some View {
-        Text(emoji)
+    private func buildFlair(_ flair: Flair) -> some View {
+        Group {
+            switch flair.content {
+                case let .text(text, color):
+                    Text(text)
+                        .foregroundStyle(color ?? .primary)
+                        .minimumScaleFactor(0.1)
+                case let .symbol(name, primaryColor, secondaryColor):
+                    Image(systemName: name)
+                        .foregroundStyle(primaryColor, secondaryColor ?? primaryColor)
+            }
+        }
+        .font(.system(size: icon.size / 2 * 0.5))
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: flair.alignment)
     }
+}
 
-    @ViewBuilder
-    private func buildSymbol(symbol: String) -> some View {
-        Image(systemName: symbol)
-            .foregroundStyle(.red, .orange)
-    }
+#Preview {
+    AppIcon(icon: Configuration(flairs: [
+        Flair(content: .text("👋"), alignment: .topLeading),
+        Flair(content: .text("👋"), alignment: .top),
+        Flair(content: .text("👋"), alignment: .topTrailing),
+
+        Flair(content: .text("🦩"), alignment: .leading),
+        Flair(content: .text("🦩"), alignment: .center),
+        Flair(content: .text("🦩"), alignment: .trailing),
+
+        Flair(content: .text("🌎"), alignment: .bottomLeading),
+        Flair(content: .text("🌎"), alignment: .bottom),
+        Flair(content: .text("🌎"), alignment: .bottomTrailing),
+
+        Flair(content: .text("Hello, World!", color: .green), alignment: .center),
+    ]))
 }

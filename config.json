@@ -1,0 +1,15 @@
+{
+    "background": {
+        "color": "#FF0000"
+    },
+    "content": [
+        {
+            "text": "👋",
+            "alignment": "leading"
+        },
+        {
+            "text": "hello, world!",
+            "alignment": "center"
+        }
+    ]
+}

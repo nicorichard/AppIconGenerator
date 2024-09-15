@@ -12,7 +12,7 @@ let package = Package(
         .library(name: "IconGeneratorCore", targets: ["IconGeneratorCore"])
     ],
     dependencies: [
-        .package(url: "https://github.com/apple/swift-argument-parser", from: "1.1.3"),
+        .package(url: "https://github.com/apple/swift-argument-parser", from: "1.1.3")
     ],
     targets: [
         .target(name: "IconGeneratorCore"),
@@ -20,7 +20,7 @@ let package = Package(
             name: "IconGenerator",
             dependencies: [
                 .target(name: "IconGeneratorCore"),
-                .product(name: "ArgumentParser", package: "swift-argument-parser"),
+                .product(name: "ArgumentParser", package: "swift-argument-parser")
             ]
         ),
     ]
