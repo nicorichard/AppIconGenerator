@@ -1,12 +1,21 @@
 import Foundation
-import SwiftUICore
+import SwiftUI
 import IconGeneratorCore
 
+enum ConversionError: Error {
+    case invalidImage
+}
+
 extension ExecutableConfiguration.Background {
-    func toCore() -> IconGeneratorCore.Background {
+    func toCore(configPath: URL) throws -> IconGeneratorCore.Background {
         switch self {
-            case .color(let color): .color(color)
-            case .image(let image): .image(image)
+            case .color(let color): return .color(color)
+            case .image(let image):
+                print("!@#", configPath.appending(path: image))
+                guard let image = NSImage(contentsOf: configPath.appending(path: image)) else {
+                    throw ConversionError.invalidImage
+                }
+                return .image(image)
         }
     }
 }
@@ -39,10 +48,10 @@ extension ExecutableConfiguration.Content {
 }
 
 extension ExecutableConfiguration {
-    func toCore() -> Configuration {
+    func toCore(configPath: URL) throws -> Configuration {
         Configuration(
             flairs: content.map { $0.toCore() },
-            background: background.toCore()
+            background: try background.toCore(configPath: configPath)
         )
     }
 }

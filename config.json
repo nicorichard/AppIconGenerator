@@ -1,15 +1,21 @@
 {
     "background": {
-        "color": "#FF0000"
+        "image": "Bulldog_inglese.jpg"
     },
     "content": [
         {
-            "text": "👋",
-            "alignment": "leading"
+            "symbol": "heart.fill",
+            "alignment": "trailing",
+            "primaryColor": "##FF0000"
         },
         {
             "text": "hello, world!",
-            "alignment": "center"
+            "alignment": "center",
+            "color": "#FF0000"
+        },
+        {
+            "text": "🏆",
+            "alignment": "trailing"
         }
     ]
 }

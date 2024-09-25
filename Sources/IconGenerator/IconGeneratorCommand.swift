@@ -14,11 +14,15 @@ struct IconGeneratorCommand: AsyncParsableCommand {
     @Argument(help: "The path where the image will be saved")
     var output: String
 
+    var configDirectory: URL {
+        URL(fileURLWithPath: config).deletingLastPathComponent()
+    }
+
     mutating func run() async throws {
-        let execConfig = try ExecutableConfiguration.load(from: config)
+        let config = try ExecutableConfiguration.load(from: config)
+            .toCore(configPath: configDirectory)
 
-        // TODO: Validate
-
-        try await IconGenerator(config: execConfig.toCore()).save(path: output)
+        try await IconGenerator(config: config)
+            .save(path: output)
     }
 }

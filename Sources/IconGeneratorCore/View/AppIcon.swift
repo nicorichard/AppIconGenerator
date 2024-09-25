@@ -2,24 +2,25 @@ import Foundation
 import SwiftUI
 
 struct AppIcon: View {
-    var icon: Configuration
+    var config: Configuration
 
     var body: some View {
         ZStack {
-            switch icon.background {
+            switch config.background {
                 case .color(let color):
                     color
                 case .image(let image):
                     Image(nsImage: image)
                         .resizable()
                         .scaledToFill()
+                        .frame(width: config.size, height: config.size)
             }
 
-            ForEach(Array(icon.flairs.enumerated()), id: \.offset) { _, flair in
+            ForEach(Array(config.flairs.enumerated()), id: \.offset) { _, flair in
                 buildFlair(flair)
             }
         }
-        .frame(width: icon.size, height: icon.size)
+        .frame(width: config.size, height: config.size)
     }
 
     @ViewBuilder
@@ -35,13 +36,15 @@ struct AppIcon: View {
                         .foregroundStyle(primaryColor, secondaryColor ?? primaryColor)
             }
         }
-        .font(.system(size: icon.size / 2 * 0.5))
+        .font(.system(size: config.size / 2 * 0.5))
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: flair.alignment)
     }
 }
 
+extension AppIcon: AppIconRepresentable {}
+
 #Preview {
-    AppIcon(icon: Configuration(flairs: [
+    AppIcon(config: Configuration(flairs: [
         Flair(content: .text("👋"), alignment: .topLeading),
         Flair(content: .text("👋"), alignment: .top),
         Flair(content: .text("👋"), alignment: .topTrailing),

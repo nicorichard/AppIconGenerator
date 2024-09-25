@@ -42,7 +42,7 @@ struct ExecutableConfiguration: Decodable {
 
     enum Background: Decodable {
         case color(Color)
-        case image(NSImage)
+        case image(String)
 
         enum CodingKeys: String, CodingKey {
             case color
@@ -55,10 +55,7 @@ struct ExecutableConfiguration: Decodable {
             if let hex = try container.decodeIfPresent(String.self, forKey: .color) {
                 self = .color(Color(hex: hex))
             } else if let image = try container.decodeIfPresent(String.self, forKey: .image) {
-                if !FileManager.default.fileExists(atPath: image) {
-                    throw ValidationError("A background image was specified but the file does not exist.")
-                }
-                self = .image(NSImage(contentsOf: URL(fileURLWithPath: image))!)
+                self = .image(image)
             } else {
                 throw ValidationError("No background color or image was provided.")
             }
