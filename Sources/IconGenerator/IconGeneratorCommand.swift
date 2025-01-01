@@ -8,11 +8,11 @@ struct ParsingError: Error {}
 
 @main
 struct IconGeneratorCommand: AsyncParsableCommand {
-    @Argument(help: "The path to a configuration file")
-    var config: String
+    @Option(name: .shortAndLong, help: "Path to the icon configuration file", completion: .file(extensions: ["json"]))
+    var config: String = "appicon.json"
 
-    @Argument(help: "The path where the image will be saved")
-    var output: String
+    @Option(name: .shortAndLong, help: "Path to output an appicon image", completion: .file(extensions: ["png"]))
+    var output: String = "appicon.png"
 
     var configDirectory: URL {
         URL(fileURLWithPath: config).deletingLastPathComponent()
